@@ -1,4 +1,23 @@
 
+# THIS SCRIPT WILL NEED WORK AS I HAVE OLNY ADDED
+# A METHOD OF OBTAINING CURRENCY, I HAVE NOT ADDED
+# ANY SORT OF STORE, THAT IS ON ANOTHER SKRIPT CODE
+# THAT WILL BE UPLOADED SHORTLY
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 options:
 	mob: "blaze", "cave spider", "creeper", "drowned", "elder guardian", "ender dragon", "enderman", "endermite", "evoker", "guardian", "husk", "piglin", "ghast", "hoglin", "magma cube", "phantom", "piglin brute", "pillager", "ravager", "shulker", "silverfish", "skeleton horseman", "skeleton", "slime", "spider", "stray", "vex", "vindicator", "warden", "witch", "wither", "wither skeleton", "zoglin", "zombie", "zombie pigman", "zombie villager", "zombified piglin"
 	reward: 6, 6, 7, 4, 25, 450, 8, 3, 5, 7, 6, 6, 10, 9, 4, 8, 11, 7, 6, 4, 2, 18, 5, 4, 5, 5, 6, 8, 13, 8, 35, 14, 9, 4, 6, 4, 6
