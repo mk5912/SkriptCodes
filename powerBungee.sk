@@ -11,10 +11,7 @@ options:
 # DO NOT CHANGE ANYTHING BELOW THIS POINT, YOU COULD PREVENT
 # THE ENTIRE SCRIPT FROM WORKING CORRECTLY IF YOU DO!
 
-# THIS SCRIPT CODE WILL ONLY BE EFFECTIVE WITH CUSTOM SERVER
-# START SCRIPTS SUCH AS THE ONE FOUNT ON MY WEBSITE 
-# https://www.myeasyserver.xyz/ OR MY GITHUB REPOSITORY
-# https://www.github.com/mk5912/SpigotServerCodes
+
 
 
 
@@ -49,8 +46,6 @@ command /shutdown:
 	trigger:
 		clear {temp}
 		clear {temp2}
-		set network variable {stop} to false
-		set network variable {restart} to false
 		set network variable {shutdown} to true
 		if network variable {shutdown} is true:
 			message "Shutdown command successfully registered!"
@@ -62,8 +57,6 @@ command /stop:
 	trigger:
 		clear {temp}
 		clear {temp2}
-		set network variable {shutdown} to false
-		set network variable {restart} to false
 		set network variable {stop} to true
 		if network variable {stop} is true:
 			message "Stop command successfully registered!"
@@ -77,8 +70,6 @@ command /restart:
 	trigger:
 		clear {temp}
 		clear {temp2}
-		set network variable {shutdown} to false
-		set network variable {stop} to false
 		set network variable {restart} to true
 		if network variable {restart} is true:
 			message "Restart command successfully registered!"
@@ -125,27 +116,35 @@ every 4 tick:
 		set {temp2} to ceil(60.2 - {temp})
 		send action bar "Server shutting down in <red>%{temp2}%<reset> seconds!" to all players
 		send "Server shutting down in <red>%{temp2}%<reset> seconds!" to console
-		if {temp} is 1:
+		if {temp} is 0.2:
 			send "Prepare to shutdown!" to console
-		if {temp2} is 0:
+			set network variable {restart} to false
+			set network variable {stop} to false
+		if {temp} is 60.2:
 			stop server
 	if network variable {stop} is true:
 		set {temp} to {temp} + 0.2
 		set {temp2} to ceil(60.2 - {temp})
-		if {temp2} is 60:
-			send "Cancel shutdown!" to console
+		if {temp} is 0.2:
+			if {shutdown} is true:
+				send "Cancel shutdown!" to console
+				set network variable {shutdown} to false
+				set network variable {restart} to false
 		send action bar "Server stopping in <red>%{temp2}%<reset> seconds!" to all players
 		send "Server stopping in <red>%{temp2}%<reset> seconds!" to console
-		if {temp2} is 0:
+		if {temp} is 60.2:
 			stop server
 	if network variable {restart} is true:
 		set {temp} to {temp} + 0.2
 		set {temp2} to ceil(60.2 - {temp})
-		if {temp2} is 60:
-			send "Cancel shutdown!" to console
+		if {temp} is 0.2:
+			if {shutdown} is true:
+				send "Cancel shutdown!" to console
+				set network variable {shutdown} to false
+				set network variable {stop} to false
 		send action bar "Server restarting in <red>%{temp2}%<reset> seconds!" to all players
 		send "Server restarting in <red>%{temp2}%<reset> seconds!" to console
-		if {temp2} is 0:
+		if {temp} is 60.2:
 			restart server
 	if network variable {abort} is true:
 		execute console command "/cancel"
