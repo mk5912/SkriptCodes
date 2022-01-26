@@ -1,0 +1,92 @@
+command /traderequest <player>:
+  description: Sends an invitation to trade.
+  aliases: tr, trade
+  trigger:
+    clear {trade::*}
+    set {%arg%_Trade} to player
+    send "%player% has requested a trade, accept with /accept." to arg
+    message "Trade Request sent."
+
+command /accept:
+  description: Accepts a player's invitation to trade.
+  trigger:
+    if {%player%_Trade} is set:
+      set {trade} to a new chest inventory with 6 rows named "<green>Trade<reset>"
+      loop (4, 13, 22, 31, 40, 49):
+        set slot loop-value of {trade} to black stained glass pane
+      set slot 48 of {trade} to honey block named "Trade Locked"
+      set slot 50 of {trade} to honey block named "Trade Locked"
+      add player to {trade::*}
+      add {%player%_Trade} to {trade::*}
+      loop {trade::*}:
+        send "{trade::%loop-index%}=%{trade::%loop-index%}%"
+        open {trade} to {trade::%loop-index%}
+      clear {%player%_Trade}
+    else:
+      message "No trade request has been sent."
+
+command /decline:
+  description: Declines a trade invitation.
+  trigger:
+    send "%player% has declined the trade invitation!" to {%player%_Trade}
+    clear {%player%_Trade}
+    message "Trade invite declined."
+
+on inventory close:
+  name of player's current inventory is "<green>Trade<reset>":
+    clear {trade::*}
+
+on load:
+  clear {rest::*}
+  set {trade1} to false
+  set {trade2} to false
+  # loop 36 times:
+  #   set {_temp} to loop-value + 53
+  #   add {_temp} to {rest::*}
+  clear {loop1::*}
+  loop 6 times:
+    loop 5 times:
+      add (loop-number-2) + 3 + (((loop-number-1) - 1) * 9) to {loop1::*}
+  clear {loop2::*}
+  loop 6 times:
+    loop 5 times:
+      add (loop-number-2) - 1 + (((loop-number-1) - 1) * 9) to {loop2::*}
+
+on inventory click:
+  name of player's current inventory is "<green>Trade<reset>":
+    if event-slot is 48:
+      cancel event
+      if player is {trade::1}:
+        set {trade1} to not {trade1}
+    if event-slot is 50:
+      cancel event
+      if player is {trade::2}:
+        set {trade2} to not {trade2}
+    else if player is {trade::1}:
+      loop {loop1::*}:
+        if event-slot is loop-value:
+          cancel event
+    if player is {trade::2}:
+      loop {loop2::*}:
+        if event-slot is loop-value:
+          cancel event
+    if {trade1} is true:
+      if {trade2} is true:
+        clear slot 48 of {trade}
+        clear slot 50 of {trade}
+        set {temp::1} to {trade::2}
+        set {temp::2} to {trade::1}
+        set {trade::1} to {temp::1}
+        set {trade::2} to {temp::2}
+        set {trade1} to false
+        set {trade2} to false
+
+every 4 ticks:
+  if {trade1} is false:
+    set slot 48 of {trade} to honey block with name "Trade Disagreed"
+  if {trade1} is true:
+    set slot 48 of {trade} to slime block with name "Trade Agreed"
+  if {trade2} is false:
+    set slot 50 of {trade} to honey block with name "Trade Disagreed"
+  if {trade2} is true:
+    set slot 50 of {trade} to slime block with name "Trade Agreed"
