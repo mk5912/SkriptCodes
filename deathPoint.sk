@@ -1,0 +1,13 @@
+
+on death:
+	if event-entity is player:
+		set {%player%_death} to location of player
+
+command /deathpoint:
+	description: Shows the death location of the player.
+	aliases: dp
+	trigger:
+		if {%player%_death} is set:
+			message "Your latest death location is %x-coordinate of {%player%_death}%, %y-coordinate of {%player%_death}%, %z-coordinate of {%player%_death}%!"
+		else:
+			message "You have not died yet."
