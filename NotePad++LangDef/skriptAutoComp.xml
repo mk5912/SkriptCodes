@@ -53,6 +53,9 @@
 		<KeyWord name="close" />
 		<KeyWord name="victim" />
 		<KeyWord name="attacker" />
+		<KeyWord name="creative" />
+		<KeyWord name="survival" />
+		<KeyWord name="adventure" />
 		<KeyWord name="player" />
 		<KeyWord name="sender" />
 		<KeyWord name="server" />
