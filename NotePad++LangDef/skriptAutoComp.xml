@@ -48,6 +48,7 @@
 		<KeyWord name="floor" />
 		<KeyWord name="add" />
 		<KeyWord name="ceil" />
+		<KeyWord name="reload" />
 		<KeyWord name="time" />
 		<KeyWord name="click" />
 		<KeyWord name="close" />
@@ -86,6 +87,7 @@
 		<KeyWord name="less" />
 		<KeyWord name="between" />
 		<KeyWord name="all" />
+		<KeyWord name="script" />
 		<KeyWord name="of" />
 		<KeyWord name="in" />
 		<KeyWord name="as" />
