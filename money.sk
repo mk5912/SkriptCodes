@@ -39,6 +39,18 @@ command /update:
 			set network variable {mob_%loop-value%} to {_temp2::%loop-index%}
 		message "Variables set!"
 
+on death:
+	set {_dif} to floor((distance between victim and attacker) / {@bonusDiv})
+	if attacker is a player:
+		if attacker's gamemode is not creative:
+			set {_temp} to network variable {%attacker%_acc}
+			loop {@mob}:
+				if "%victim%" is loop-value:
+					set {_temp2} to network variable {mob_%loop-value%}
+					send "Mob killed was %victim%, depositing %{_temp2}% to %attacker%'s account with distance bonus %{_dif}%!" to attacker
+					set  network variable {%attacker%_acc} to {_temp} + {_temp2} + {_dif}
+					stop
+
 command /debug:
 	permission: {@perm}
 	permission message: {@permMess}
@@ -46,42 +58,3 @@ command /debug:
 		set {_temp::*} to {@mob}
 		loop {_temp::*}:
 			message "{mob_%loop-value%} set to value %network variable {mob_%loop-value%}%!"
-
-on death:
-	set {_dif} to floor((distance between victim and attacker) / {@bonusDiv})
-	if attacker is a player:
-		set {_temp} to network variable {%attacker%_Balance}
-		loop {@mob}:
-			if "%victim%" is loop-value:
-				set {_temp2} to network variable {mob_%loop-value%}
-				send "Mob killed was %victim%, depositing %{_temp2}% to %attacker%'s account with distance bonus %{_dif}%!" to attacker
-				set  network variable {%attacker%_Balance} to {_temp} + {_temp2} + {_dif}
-				stop
-
-on join:
-	if  network variable {%player%_Balance} is not set:
-		set  network variable {%player%_Balance} to 10
-
-command /balance:
-	description: Displayes your current account balance.
-	executable by: players
-	aliases: b
-	trigger:
-		message "Your balance is %network variable {%player%_Balance}%!"
-
-command /clearbalance <player>:
-	description: Clears the player's account balance.
-	permission: {@perm}
-	permission message: {@permMess}
-	aliases: cb
-	trigger:
-		set network variable {%arg%_Balance} to 0
-
-command /setbalance <player> <number>:
-	description: Sets the players balance.
-	usage: /setbalance <player> <amount>
-	permission: {@perm}
-	permission message: {@permMess}
-	aliases: sb
-	trigger:
-		set network variable {%arg-1%_Balance} to arg-2
