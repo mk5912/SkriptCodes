@@ -1,0 +1,80 @@
+
+on load:
+	if player has a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!":
+		remove all compasses named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!" from player's inventory
+		wait 1 tick
+		give player a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+	else:
+		give player a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+
+on join:
+	if player has a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!":
+		remove all compasses named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!" from player's inventory
+		wait 1 tick
+		give player a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+	else:
+		give player a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+
+on respawn:
+	give player a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+
+on death of player:
+	remove all compasses named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!" from player's inventory
+	
+
+on drop:
+	event-item is a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!":
+		cancel event
+
+on right click:
+	player is holding a compass named "<green>Worlds<reset>" with lore "Right click while holding to change worlds!"
+	wait 1 tick
+	set {_gui} to a new chest inventory with 3 row with name "<black>Worlds<reset>"
+	if world is "Survival":
+		set slot 4 of {_gui} to grass named "<lime>Survival<reset>" with lore "&7You are in this server already!"
+	else:
+		set slot 4 of {_gui} to grass named "<lime>Survival<reset>" with lore "&7Click here to join Survival!"
+	if world is "Creative":
+		set slot 12 of {_gui} to stone named "<light grey>Creative<reset>" with lore "&7You are in this server already!"
+	else:
+		set slot 12 of {_gui} to stone named "<light grey>Creative<reset>" with lore "&7Click here to join Creative!"
+	if world is "PvP":
+		set slot 14 of {_gui} to red glazed terracotta named "<red>PvP<reset>" with lore "&7You are in this server already!"
+	else:
+		set slot 14 of {_gui} to red glazed terracotta named "<red>PvP<reset>" with lore "&7Click here to join PvP!"
+	if world is "Adventure":
+		set slot 22 of {_gui} to yellow glazed terracotta named "<yellow>Adventure<reset>" with lore "&7You are in this server already!"
+	else:
+		set slot 22 of {_gui} to yellow glazed terracotta named "<yellow>Adventure<reset>" with lore "&7Click here to join Adventure!"
+	if world is "Hub":
+		set slot 26 of {_gui} to warped door named "<light blue>Hub<reset>" with lore "&7You are in this server already!"
+	else:
+		set slot 26 of {_gui} to warped door named "<light blue>Hub<reset>" with lore "&7Click here to return to hub!"
+	open {_gui} to player
+	
+on inventory click:
+	if name of event-inventory is "<black>Worlds<reset>":
+		cancel event
+		if index of event-slot = 4:
+			connect player to server "Survival"
+		if index of event-slot = 12:
+			connect player to server "Creative"
+		if index of event-slot = 22:
+			connect player to server "Adventure"
+		if index of event-slot = 14:
+			connect player to server "PvP"
+		if index of event-slot = 26:
+#			send message "<red>The Hub is currently unavailable!<reset>" to player
+			connect player to server "Hub"
+
+command /send <player> <server>:
+	description: Sends a player to the selected server.
+	executable by: players, console
+	trigger:
+		connect arg-1 to server "%arg-2%"
+
+on command "/stop":
+	connect all players to server "Hub"
+
+on command "/restart":
+	connect all players to server "Hub"

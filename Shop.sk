@@ -1,0 +1,201 @@
+#
+# Creates a basic store across the BungeeCord Server.
+#
+
+options:
+	redstone_1: "", "", "", lever, hopper, stone button, "", "", ""
+	redstone_2: "", redstone dust, sticky piston, slime block, observer, honey block, piston, redstone block, ""
+	redstone_3: "", "", dropper, note block, redstone torch, redstone lamp, dispenser, "", ""
+	redstone_4: "", "", "", repeater, daylight sensor, comparator, "", "", ""
+	redstone_1_cost: "", "", "", 1, 18, 1, "", "", ""
+	redstone_2_cost: "", 4, 13, 8.50, 22, 9, 7, 35, ""
+	redstone_3_cost: "", "", 15, 7, 3.50, 18, 16, "", ""
+	redstone_4_cost: "", "", "", 11, 26, 15.5, "", "", ""
+	tools_1: "", compass, wooden axe, stone axe, iron axe, gold axe, diamond axe, netherite axe, ""
+	tools_2: "", shears, wooden pickaxe, stone pickaxe, iron pickaxe, gold pickaxe, diamond pickaxe, netherite pickaxe, ""
+	tools_3: "", spyglass, wooden shovel, stone shovel, iron shovel, gold shovel, diamond shovel, netherite shovel, ""
+	tools_4: "", clock, wooden hoe, stone hoe, iron hoe, gold hoe, diamond hoe, netherite hoe, ""
+	tools_1_cost: "", 2, 2, 4, 7, 9, 18, 65, ""
+	tools_2_cost: "", 4, 4, 6, 9, 13, 23, 70, ""
+	tools_3_cost: "", 5, 3, 5, 7, 8, 16, 55, ""
+	tools_4_cost: "", 3, 1, 2, 4, 7, 11, 40, ""
+	armour_1: "", "", leather helmet, iron helmet, gold helmet, diamond helmet, netherite helmet, "", ""
+	armour_2: "", "", leather chestplate, iron chestplate, gold chestplate, diamond chestplate, netherite chestplate, "", ""
+	armour_3: "", "", leather leggings, iron leggings, gold leggings, diamond leggings, netherite leggings, "", ""
+	armour_4: "", "", leather boots, iron boots, gold boots, diamond boots, netherite boots, "", ""
+	armour_1_cost: "", "", 5, 10, 30, 70, 150, "", ""
+	armour_2_cost: "", "", 7, 15, 40, 80, 175, "", ""
+	armour_3_cost: "", "", 6, 13, 35, 75, 160, "", ""
+	armour_4_cost: "", "", 4, 8, 25, 65, 130, "", ""
+	weapons_1: "", "", "", "", "", "", "", "", ""
+	weapons_2: "", wooden sword, stone sword, iron sword, gold sword, diamond sword, netherite sword, bow, ""
+	weapons_3: "", "", "", "", arrow, "", "", "", ""
+	weapons_4: "", "", "", "", "", "", "", "", ""
+	weapons_1_cost: "", "", "", "", "", "", "", "", ""
+	weapons_2_cost: "", 2, 8, 13, 15, 30, 100, 10, ""
+	weapons_3_cost: "", "", "", "", 8, "", "", "", ""
+	weapons_4_cost: "", "", "", "", "", "", "", "", ""
+	food_1: "", "", "", "", "", "", "", "", ""
+	food_2: "", cooked chicken, cooked salmon, beetroot soup, pumpkin pie, cooked beef, cooked cod, cooked rabbit, ""
+	food_3: "", mushroom stew, apple, bread, baked potato, cooked porkchop, golden apple, enchanted golden apple, ""
+	food_4: "", "", "", "", "", "", "", "", ""
+	food_1_cost: "", "", "", "", "", "", "", "", ""
+	food_2_cost: "", 4, 3, 5, 7, 4, 2, 6, ""
+	food_3_cost: "", 5, 1, 2, 2, 3, 30, 65, ""
+	food_4_cost: "", "", "", "", "", "", "", "", ""
+
+on load:
+	set {redstone::items::*} to {@redstone_1}, {@redstone_2}, {@redstone_3}, {@redstone_4}
+	set {redstone::price::*} to {@redstone_1_cost}, {@redstone_2_cost}, {@redstone_3_cost}, {@redstone_4_cost}
+	
+	set {tool::items::*} to {@tools_1}, {@tools_2}, {@tools_3}, {@tools_4}
+	set {tool::price::*} to {@tools_1_cost}, {@tools_2_cost}, {@tools_3_cost}, {@tools_4_cost}
+	
+	set {armour::items::*} to {@armour_1}, {@armour_2}, {@armour_3}, {@armour_4}
+	set {armour::price::*} to {@armour_1_cost}, {@armour_2_cost}, {@armour_3_cost}, {@armour_4_cost}
+	
+	set {weapon::items::*} to {@weapons_1}, {@weapons_2}, {@weapons_3}, {@weapons_4}
+	set {weapon::price::*} to {@weapons_1_cost}, {@weapons_2_cost}, {@weapons_3_cost}, {@weapons_4_cost}
+	
+	set {food::items::*} to {@food_1}, {@food_2}, {@food_3}, {@food_4}
+	set {food::price::*} to {@food_1_cost}, {@food_2_cost}, {@food_3_cost}, {@food_4_cost}
+	
+
+
+command /shop:
+	aliases: store
+	executable by: players
+	description: Enables the player to purchase items for experience you have stored in your account.
+	trigger:
+		set {_shop} to a new chest inventory with 3 row with name "Shop"
+		set slot 11 of {_shop} to redstone dust named "<red>Redstone<reset>" with lore "&7Click to open the Redstone shop!<reset>"
+		set slot 12 of {_shop} to diamond pickaxe named "<light blue>Tools<reset>" with lore "&7Click to open the Tool shop!<reset>"
+		set slot 13 of {_shop} to diamond chestplate named "<blue>Armour<reset>" with lore "&7Click to open the Armour shop!<reset>"
+		set slot 14 of {_shop} to diamond sword named "<grey>Weapons<reset>" with lore "&7Click to open the Weapon shop!<reset>"
+		set slot 15 of {_shop} to enchanted golden apple named "<gold>Food<reset>" with lore "&7Click to open the Food shop!<reset>"
+		set slot 26 of {_shop} to elytra named "Exit" with lore "&7Click her to close the store!<reset>"
+		open {_shop} to player
+
+on inventory click:
+	if name of event-inventory contains "Shop":
+		cancel event
+		set {local_%player%_acc} to network variable {%player%_acc}
+		
+		set {_redstone} to a new chest inventory with 4 row with name "Shop - Redstone"
+		loop {redstone::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			set {_temp2} to loop-value
+			set slot {_temp} of {_redstone} to loop-value with lore "%{local_%player%_acc}%/%{redstone::price::%loop-index%}%ó"
+		set slot 35 of {_redstone} to elytra named "Back" with lore "Click to go back!"
+		
+		set {_tools} to a new chest inventory with 4 row with name "Shop - Tools"
+		loop {tool::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			set {_temp2} to loop-value
+			set slot {_temp} of {_tools} to loop-value with lore "%{local_%player%_acc}%/%{tool::price::%loop-index%}%ó"
+		set slot 35 of {_tools} to elytra named "Back" with lore "Click to go back!"
+		
+		set {_armour} to a new chest inventory with 4 rows with name "Shop - Armour"
+		loop {armour::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			set {_temp2} to loop-value
+			set slot {_temp} of {_armour} to loop-value with lore "%{local_%player%_acc}%/%{armour::price::%loop-index%}%ó"
+		set slot 35 of {_armour} to elytra named "Back" with lore "Click to go back!"
+		
+		set {_weapon} to a new chest inventory with 4 row with name "Shop - Weapons"
+		loop {weapon::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			set {_temp2} to loop-value
+			set slot {_temp} of {_weapon} to loop-value with lore "%{local_%player%_acc}%/%{weapon::price::%loop-index%}%ó"
+		set slot 35 of {_weapon} to elytra named "Back" with lore "Click to go back!"
+		
+		set {_food} to a new chest inventory with 4 row with name "Shop - Food"
+		loop {food::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			set {_temp2} to loop-value
+			set slot {_temp} of {_food} to loop-value with lore "%{local_%player%_acc}%/%{food::price::%loop-index%}%ó"
+		set slot 35 of {_food} to elytra named "Back" with lore "Click to go back!"
+	
+	if name of event-inventory is "Shop":
+		if index of event-slot = 11:
+			open {_redstone} to player
+		if index of event-slot = 12:
+			open {_tools} to player
+		if index of event-slot = 13:
+			open {_armour} to player
+		if index of event-slot = 14:
+			open {_weapon} to player
+		if index of event-slot = 15:
+			open {_food} to player
+		if index of event-slot = 26:
+			close inventory of player
+			if player has permission "skript.debug":
+				reload script "shop"
+	
+	if name of event-inventory is "Shop - Redstone":
+		open {_redstone} to player
+		wait 2 ticks
+		loop {redstone::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			if index of event-slot = {_temp}:
+				if {local_%player%_acc} >= {redstone::price::%loop-index%}:
+					give player loop-value
+					set {_temp} to {local_%player%_acc} - {redstone::price::%loop-index%}
+					set network variable {%player%_acc} to {_temp}
+		if index of event-slot = 35:
+			execute player command "/shop"
+	
+	if name of event-inventory is "Shop - Tools":
+		open {_tools} to player
+		wait 2 ticks
+		loop {tool::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			if index of event-slot = {_temp}:
+				if {local_%player%_acc} >= {tool::price::%loop-index%}:
+					give player loop-value
+					set {_temp} to {local_%player%_acc} - {tool::price::%loop-index%}
+					set network variable {%player%_acc} to {_temp}
+		if index of event-slot = 35:
+			execute player command "/shop"
+	
+	if name of event-inventory is "Shop - Armour":
+		open {_armour} to player
+		wait 2 ticks
+		loop {armour::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			if index of event-slot = {_temp}:
+				if {local_%player%_acc} >= {armour::price::%loop-index%}:
+					give player loop-value
+					set {_temp} to {local_%player%_acc} - {armour::price::%loop-index%}
+					set network variable {%player%_acc} to {_temp}
+		if index of event-slot = 35:
+			execute player command "/shop"
+	
+	if name of event-inventory is "Shop - Weapons":
+		open {_weapon} to player
+		wait 2 ticks
+		loop {weapon::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			if index of event-slot = {_temp}:
+				if {local_%player%_acc} >= {weapon::price::%loop-index%}:
+					set {_temp} to {local_%player%_acc} - {weapon::price::%loop-index%}
+					set network variable {%player%_acc} to {_temp}
+					if loop-value is arrow:
+						give player 32 arrows
+					else:
+						give player loop-value
+		if index of event-slot = 35:
+			execute player command "/shop"
+	
+	if name of event-inventory is "Shop - Food":
+		open {_food} to player
+		wait 2 ticks
+		loop {food::items::*}:
+			set {_temp} to loop-index parsed as integer - 1
+			if index of event-slot = {_temp}:
+				if {local_%player%_acc} >= {food::price::%loop-index%}:
+					give player loop-value
+					set {_temp} to {local_%player%_acc} - {food::price::%loop-index%}
+					set network variable {%player%_acc} to {_temp}
+		if index of event-slot = 35:
+			execute player command "/shop"

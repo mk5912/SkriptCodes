@@ -1,0 +1,80 @@
+		
+on first join:
+	if {world::spawn} is set:
+		teleport player to {world::spawn}
+	else:
+		set {world::spawn} to location of player
+	
+on respawn:
+	if {%player%::spawn} is set:
+		teleport player to {%player%::spawn}
+	else:
+		if {world::spawn} is set:
+			teleport player to {world::spawn}
+		else:
+			set {world::spawn} to location of player
+	
+command /spawnsetworld:
+	aliases: ssw
+	description: Sets the global default spawn point!
+	permission: skript.debug
+	trigger:
+		if {world::spawn} is set:
+			set {temp} to location of player
+			message "<red>!Warning!<reset>, the world spawn is already set, do you want to overwrite?"
+			message "Send yes to over right!"
+		else:
+			message "<orange>Global world spawn is set!<reset>"
+			set {world::spawn} to location of player
+
+on chat:
+	player has permission "skript.debug"
+	set {_message} to message
+	if "%{_message}%" is "yes":
+		if {temp} is set:
+			cancel event
+			clear {world::spawn}
+			set {world::spawn} to {temp}
+			clear {temp}
+			message "<orange>The world spawn has been changed!<reset>"
+	
+command /spawnset:
+	aliases: ss
+	description: Sets the players current possition to spawn if they don't have one set.
+	executable by: players
+	trigger:
+		message "<orange>Your world spawn is set!<reset>"
+		set {%player%::spawn} to location of player
+
+command /clearspawn:
+	aliases: cs
+	description: Clears the current players personal spawn location.
+	executable by: players
+	trigger:
+		message "<orange>Your world spawn is cleared!<reset>"
+		clear {%player%::spawn}
+
+command /spawn:
+	aliases: s
+	description: Sends the player to their spawn.
+	executable by: players
+	trigger:
+		if {%player%::spawn} is set:
+			teleport player to {%player%::spawn}
+			message "<green>Travelling to spawn!<reset>"
+		else if {world::spawn} is set:
+			teleport player to {world::spawn}
+			message "<green>Travelling to spawn!<reset>"
+		else:
+			message "<red>No spawn set!<reset>"
+
+command /wordspawn:
+	aliases: ws
+	description: Sends the player to the world spawn.
+	executable by: players
+	trigger:
+		if {world::spawn} is set:
+			teleport player to {world::spawn}
+			message "<green>Travelling to spawn!<reset>"
+		else:
+			message "<red>No world spawn set!<reset>"

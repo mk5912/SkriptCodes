@@ -1,0 +1,73 @@
+options:
+	perm: skript.debug
+	permMess: You do not have permission to use that command!
+
+on join:
+	if  network variable {%player%_Balance} is not set:
+		set  network variable {%player%_Balance} to 10
+		
+on advancement get:
+	set {%event-player%_temp} to network variable {%event-player%_acc}
+	if event-player's gamemode is not creative:
+		set {_temp} to {%event-player%_temp} + 4
+		set network variable {%event-player%_acc} to {_temp}
+
+command /bank <number>:
+	description: Converts xp to currency to be used in the shop.
+	trigger:
+		if player's gamemode is not creative:
+			if arg-1 is set:
+				if level of player >= number-arg:
+					set {_temp} to network variable {%player%_acc}
+					set {_temp2} to arg * 4
+					set {%player%_temp} to {_temp} + {_temp2}
+					
+					set network variable {%player%_acc} to {_%player%_temp}
+					execute console command "/xp add %player% -%arg% levels"
+					message "Banked <gold>%arg-1%<reset>xp as <green>%{_temp2}%<reset>¢!"
+				else:
+					message "No xp was banked!"
+
+
+command /setbalance <player> <number>:
+	description: Sets the players balance.
+	usage: /setbalance <player> <amount>
+	permission: {@perm}
+	permission message: {@permMess}
+	aliases: sb
+	trigger:
+		set network variable {%player-arg%_acc} to number-arg
+		message "Balance for %player-arg% has been set to <green>%number-arg%<reset>¢!"
+
+command /clearbalance <player>:
+	description: Clears the player's account balance.
+	permission: {@perm}
+	permission message: {@permMess}
+	aliases: cb
+	trigger:
+		set network variable {%arg%_acc} to 0
+		message "Balance for %player-arg% has been set to <green>%network variable {%arg%_acc}%<reset>¢!"
+
+command /transfer <player> <number>:
+	description: Transfers some of your funds to the target player's account.
+	trigger:
+		set {%player%_temp} to network variable {%player%_acc}
+		if number-arg is less than {%player%_temp}:
+			set {_temp} to {%player%_temp} - number-arg
+			set network variable {%player%_acc} to {_temp}
+			set {_temp} to {%player%_temp} + number-arg
+			set network variable {%player-arg%_acc} to {_temp}
+			clear {_temp}
+			clear {%player%_temp}
+			message "You have sent <green>%number-arg%<reset>¢ to %player-arg%!"
+			message "You have been sent <green>%number-arg%<reset>¢ by %player%!" to player-arg
+		else:
+			message "You do not have the funds for that."
+
+
+command /balance:
+	description: Displayes your current account balance.
+	executable by: players
+	aliases: b
+	trigger:
+		message "Your account balance is <green>%network variable {%player%_acc}%<reset>¢!"

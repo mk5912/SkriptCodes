@@ -1,0 +1,20 @@
+
+command /uuid <player>:
+	permission: skript.debug
+	description: Provides a players uuid.
+	executable by: console, players
+	trigger:
+		if arg-1 is not set:
+			send message "The UUID of %player% is %uuid of player%!" to player and console
+		if arg-1 is online:
+			send message "The UUID of %arg-1% is %uuid of arg-1%!" to player and console
+		if arg-1 is offline:
+			send message "The %arg-1% could not be found!" to player and console
+			
+command /seebalance <player>:
+	description: Shows the target players account balance.
+	executable by: console, players
+	permission: skript.debug
+	trigger:
+		set {bal} to network variable {%player-arg%_acc}
+		message "%player-arg%'s balance is %{bal}%"
