@@ -36,6 +36,8 @@ on load:
 	set {shutdown} to false
 	set {stop} to false
 	set {restart} to false
+	clear {abort}
+	clear {reset}
 	clear {temp}
 	clear {temp2}
 
@@ -60,8 +62,6 @@ command /stop:
 		set {stop} to true
 		if {stop} is true:
 			message "Stop command successfully registered!"
-		if {shutdown} is true:
-			send "Cancel shutdown!"
 
 command /restart:
 	permission: {@perm}
@@ -73,8 +73,6 @@ command /restart:
 		set {restart} to true
 		if {restart} is true:
 			message "Restart command successfully registered!"
-		if {shutdown} is true:
-			send "Cancel shutdown!"
 
 command /cancel:
 	permission: {@perm}
@@ -87,26 +85,26 @@ command /cancel:
 		message "Abort command successfully registered!"
 		if {shutdown} is true:
 			set {shutdown} to false
-			set {abort} to true
+			set {abort} to "shutdown"
 			send action bar "Shutdown Aborted!" to all players
 		else if {stop} is true:
 			set {stop} to false
-			set {abort} to true
+			set {abort} to "stop"
 			send action bar "Shutdown Aborted!" to all players
 		else if {restart} is true:
 			set {restart} to false
-			set {abort} to true
+			set {abort} to "restart"
 			send action bar "Restart Aborted!" to all players
 		else:
 			message "Nothing to cancel!"
 
-command /reset <text>:
-	permission: {@perm}
-	permission message: {@permMessage}
-	description: Globally accross a bungeecord network (when used with Skungee) reloads the specified global script.
-	usage: /reset <global script>
-	trigger:
-		set {reset} to arg
+# command /reset <text>:
+	# permission: {@perm}
+	# permission message: {@permMessage}
+	# description: Globally accross a bungeecord network (when used with Skungee) reloads the specified global script.
+	# usage: /reset <global script>
+	# trigger:
+		# set {reset} to arg
 
 every 4 tick:
 	if {shutdown} is true:
@@ -125,7 +123,7 @@ every 4 tick:
 		set {temp2} to ceil(60.2 - {temp})
 		if {temp} is 0.2:
 			if {shutdown} is true:
-				send "Cancel shutdown!" to console
+			send "Shutdown canceled!" to console
 				set {shutdown} to false
 				set {restart} to false
 		send action bar "Server stopping in <red>%{temp2}%<reset> seconds!" to all players
@@ -137,17 +135,19 @@ every 4 tick:
 		set {temp2} to ceil(60.2 - {temp})
 		if {temp} is 0.2:
 			if {shutdown} is true:
-				send "Cancel shutdown!" to console
+			send "Shutdown canceled!" to console
 				set {shutdown} to false
 				set {stop} to false
 		send action bar "Server restarting in <red>%{temp2}%<reset> seconds!" to all players
 		send "Server restarting in <red>%{temp2}%<reset> seconds!" to console
 		if {temp} is 60.2:
 			restart server
-	if {abort} is true:
+	if {abort} is set:
+		if {abort} is "shutdown":
+			send "Shutdown canceled!" to console
 		execute console command "/cancel"
-		wait 4 ticks
-		set {abort} to false
-	if {reset} is set:
-		execute console command "/skript reload % {reset}%"
-		clear {reset}
+		wait 2 ticks
+		clear {abort}
+	# if {reset} is set:
+		# execute console command "/skript reload % {reset}%"
+		# clear {reset}

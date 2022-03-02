@@ -36,6 +36,8 @@ on load:
 	set network variable {shutdown} to false
 	set network variable {stop} to false
 	set network variable {restart} to false
+	clear network variable {abort}
+	clear network variable {reset}
 	clear {temp}
 	clear {temp2}
 
@@ -60,8 +62,6 @@ command /stop:
 		set network variable {stop} to true
 		if network variable {stop} is true:
 			message "Stop command successfully registered!"
-		if network variable {shutdown} is true:
-			send "Cancel shutdown!"
 
 command /restart:
 	permission: {@perm}
@@ -73,8 +73,6 @@ command /restart:
 		set network variable {restart} to true
 		if network variable {restart} is true:
 			message "Restart command successfully registered!"
-		if network variable {shutdown} is true:
-			send "Cancel shutdown!"
 
 command /cancel:
 	permission: {@perm}
@@ -87,17 +85,17 @@ command /cancel:
 		message "Abort command successfully registered!"
 		if network variable {shutdown} is true:
 			set network variable {shutdown} to false
-			set network variable {abort} to true
+			set network variable {abort} to "shutdown"
 			send action bar "Shutdown Aborted!" to all players
 		
 		else if network variable {stop} is true:
 			set network variable {stop} to false
-			set network variable {abort} to true
+			set network variable {abort} to "stop"
 			send action bar "Shutdown Aborted!" to all players
 		
 		else if network variable {restart} is true:
 			set network variable {restart} to false
-			set network variable {abort} to true
+			set network variable {abort} to "restart"
 			send action bar "Restart Aborted!" to all players
 		else:
 			message "Nothing to cancel!"
@@ -127,7 +125,7 @@ every 4 tick:
 		set {temp2} to ceil(60.2 - {temp})
 		if {temp} is 0.2:
 			if {shutdown} is true:
-				send "Cancel shutdown!" to console
+				send "Shutdown canceled!" to console
 				set network variable {shutdown} to false
 				set network variable {restart} to false
 		send action bar "Server stopping in <red>%{temp2}%<reset> seconds!" to all players
@@ -139,17 +137,19 @@ every 4 tick:
 		set {temp2} to ceil(60.2 - {temp})
 		if {temp} is 0.2:
 			if {shutdown} is true:
-				send "Cancel shutdown!" to console
+				send "Shutdown canceled!" to console
 				set network variable {shutdown} to false
 				set network variable {stop} to false
 		send action bar "Server restarting in <red>%{temp2}%<reset> seconds!" to all players
 		send "Server restarting in <red>%{temp2}%<reset> seconds!" to console
 		if {temp} is 60.2:
 			restart server
-	if network variable {abort} is true:
+	if network variable {abort} is set:
+		if network variable {abort} is "shutdown":
+			send "Shutdown canceled!" to console
 		execute console command "/cancel"
-		wait 4 ticks
-		set network variable {abort} to false
+		wait 2 ticks
+		clear network variable {abort}
 	if network variable {reset} is set:
 		execute console command "/skript reload %network variable {reset}%"
 		clear network variable {reset}
