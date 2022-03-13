@@ -40,7 +40,7 @@ on chat:
 	
 command /spawnset:
 	aliases: ss
-	description: Sets the players current possition to spawn if they don't have one set.
+	description: Sets the players spawn to their current position if they don't have one set.
 	executable by: players
 	trigger:
 		message "<orange>Your world spawn is set!<reset>"

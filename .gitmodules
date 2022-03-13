@@ -1,4 +1,0 @@
-[submodule "SpigotServerCodes"]
-	path = ServerCodes
-	url = https://github.com/mk5912/SpigotServerCodes
-	branch = Experimental
